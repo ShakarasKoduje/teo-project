@@ -3,14 +3,27 @@
     <p>Hi there!</p>
     <p>It works!</p>
     <div>
-        {% for model in mymodels %}
-            <p>{{model.name}}</strong></p>
+        {% for autor in authors %}
+
+            <ul>
+                <li>{{autor.name}}</li>
+                <ul>
+                    <li>{{autor.posts}}</li>
+                </ul>
+
+            </ul>
         {% endfor %}
     </div>
     <div>
         {% for post in posts %}
             <p>{{post.id}}: <strong>{{post.postTitle}}</strong></p>
         {% endfor %}
+    </div>
+    <div>
+        <p>--------------------------------------------------------------------------------------</p>
+
+            <p>{{calosc.content}}</strong></p>
+
     </div>
 </body>
 </html>

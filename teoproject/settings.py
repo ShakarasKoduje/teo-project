@@ -158,9 +158,13 @@ CELERY_BEAT_SCHEDULE = {
         'task': 'teoapp.tasks.secondtask',
         'schedule': timedelta(seconds=120)
     },
-    'taskdetector':{
-        'task':'teoapp.tasks.taskdetector',
-        'schedule': timedelta(seconds=20)
+    'author_creator':{
+        'task':'author_creator',
+        'schedule': timedelta(seconds=180)
+    },
+    'blogContent':{
+        'task': 'blogContent',
+        'schedule': timedelta(seconds=220)
     }
 
 

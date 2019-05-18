@@ -21,3 +21,18 @@ class PostData(models.Model):
     @postTitle.setter
     def postTitle(self, nowa):
         self._postTitle = nowa
+
+class PostAuthor(models.Model):
+    name = models.CharField(max_length=120)
+    posts = models.TextField(blank=True)
+
+class PostContent(models.Model):
+    _content = models.TextField(blank=True)
+
+    @property
+    def content(self):
+        return  self._content
+    @content.setter
+    def content(self, value):
+        self._content = value
+

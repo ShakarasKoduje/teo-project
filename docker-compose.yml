@@ -35,7 +35,7 @@ services:
       - C_FORCE_ROOT=true
     # test czy działa, normalnie przenieść tutaj celery -A teoproject worker -l info -B, ewentualnie z -Q i queusami.
     #command: bash -c "celery -A teoproject worker -l info -Q default,high_priority,low_priority -c5 -B"
-    command: bash -c "celery -A teoproject worker -l info -Q default,high_priority,low_priority -c5 -B"
+    command: bash -c "celery -A teoproject worker -l info -Q default,high_priority,low_priority,blog -c5 -B"
     ports: []
     depends_on:
       - postgres
