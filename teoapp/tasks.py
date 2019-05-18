@@ -2,18 +2,11 @@ from celery import shared_task, task, chain, group
 import requests
 import datetime
 requests.packages.urllib3.disable_warnings()
-
 from bs4 import BeautifulSoup as bs
-
 from teoapp.models import PostData
-
 import time
-
-
-#requests.packages.urlib3.disable_warnings()
-
-
 from teoapp.models import MyModel, PostAuthor, PostContent
+from teoapp.analizatorTekstu import topTenAutora, topTenBlog
 
 @shared_task(queue='low_priority', name='author_creator')
 def author_creator():
@@ -25,10 +18,16 @@ def author_creator():
             posts = PostData.objects.filter(postAuthor=postauthor.name)
             #print(posts)
             content = ""
+            topTen = ""
             for p in posts:
                 content += (str(f"{p.postContent}") + "\n\n\n\n")
             postauthor.posts = content
-            postauthor.save()
+            topTen = topTenAutora(postauthor.name)
+            if postauthor.topTen == topTen and postauthor.topTen != "":
+                postauthor.save()
+            else:
+                postauthor.topTen = topTen
+                postauthor.save()
         except PostAuthor.DoesNotExist:
             postauthor = PostAuthor()
             postauthor.name = name
@@ -45,6 +44,10 @@ def blogContent():
     try:
         blogContent = PostContent.objects.get(id=1)
         blogContent.content = content
+        topTen = topTenBlog(blogContent.id)
+        print(topTen)
+
+        blogContent.topTen = topTen
         blogContent.save()
         time.sleep(0.01)
 
@@ -55,7 +58,7 @@ def blogContent():
         time.sleep(0.01)
 
 
-@shared_task(queue='low_priority')
+@shared_task(queue='low_priority', name="taskdetector")
 def taskdetector():
     t = datetime.datetime.now()
     s = str(t)

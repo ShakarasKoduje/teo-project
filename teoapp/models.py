@@ -25,9 +25,29 @@ class PostData(models.Model):
 class PostAuthor(models.Model):
     name = models.CharField(max_length=120)
     posts = models.TextField(blank=True)
+    _topTen = models.TextField(blank=True)
+
+    @property
+    def topTen(self):
+        return self._topTen
+
+    @topTen.setter
+    def topTen(self, value):
+        self._topTen = value
+
+
 
 class PostContent(models.Model):
     _content = models.TextField(blank=True)
+    _topTen = models.TextField(blank=True)
+
+    @property
+    def topTen(self):
+        return self._topTen
+
+    @topTen.setter
+    def topTen(self, value):
+        self._topTen = value
 
     @property
     def content(self):

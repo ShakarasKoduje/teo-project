@@ -8,22 +8,14 @@
             <ul>
                 <li>{{autor.name}}</li>
                 <ul>
-                    <li>{{autor.posts}}</li>
+                    <li>{{autor.topTen}}</li>
                 </ul>
 
             </ul>
         {% endfor %}
     </div>
     <div>
-        {% for post in posts %}
-            <p>{{post.id}}: <strong>{{post.postTitle}}</strong></p>
-        {% endfor %}
-    </div>
-    <div>
-        <p>--------------------------------------------------------------------------------------</p>
-
-            <p>{{calosc.content}}</strong></p>
-
+        <p>{{calosc.topTen}}</p>
     </div>
 </body>
 </html>

@@ -165,6 +165,10 @@ CELERY_BEAT_SCHEDULE = {
     'blogContent':{
         'task': 'blogContent',
         'schedule': timedelta(seconds=220)
+    },
+    'taskdetector':{
+        'task': 'taskdetector',
+        'schedule' : timedelta(seconds=10)
     }
 
 
