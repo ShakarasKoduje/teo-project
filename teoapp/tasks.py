@@ -13,17 +13,23 @@ import time
 #requests.packages.urlib3.disable_warnings()
 from celery.schedules import timedelta, crontab
 
+from teoapp.models import MyModel
 
 
-#@shared_task(queue='low_periodic', options={'queue':'high_periodic'})
-@shared_task(ignore_result=True, queue='low_priority')
-def hello(razy=1):
-    print('Hello there!'* razy)
-    return razy
-
-
-#@shared_task(queue='low_periodic', options={'queue':'low_periodic'})
-#@shared_task
+@shared_task(queue='low_priority')
+def taskdetector():
+    t = datetime.datetime.now()
+    s = str(t)
+    models = MyModel.objects.all()
+    for m in models:
+        try:
+            model = MyModel.objects.get(name = s)
+        except MyModel.DoesNotExist:
+            model = MyModel()
+            model.name = s
+            model.save()
+            time.sleep(0.01)
+    print(model)
 
 
 @shared_task(max_retries=None, queue='high_priority')
@@ -64,35 +70,7 @@ def secondtask():
             post.save()
             time.sleep(0.01)
             #print(f"utworzono model {str(post)}")
-    return listaWpisow
-
-@shared_task(ignore_result=True,queue='high_priority')
-def powitanie():
-    print("To powitanie ma pojawić się gdy zostanie wykonany runserver")
-    # dwie grupy zadań, które będą się realizować w chain
-    g = group([hello.s(), hello.s(), hello2.s(), hello.s()])
-   # g2 = group([hello2.s(), hello2.s(), hello2.s(), hello.s()])
-
-    g.apply_async()
-    #ch = chain(g| g2)
-    #ch.apply_async()
-    #return ch
-    return g
-
-@shared_task(ignore_result=True, queue='high_priority')
-def potwierdzenie():
-    print("POTWIERDZENIE BAZA DANYCH!")
-    print("POTWIERDZENIE BAZA DANYCH!")
-    print("POTWIERDZENIE BAZA DANYCH!")
-    print("POTWIERDZENIE BAZA DANYCH!")
-
-
-
-@shared_task(ignore_result=True,queue='low_priority')
-def hello2(r=1):
-    print("Kolejne hello!")
-    #return 1
-    return True
+    #return listaWpisow
 
 def zbieraczStronBloga():
         teonitePages = []

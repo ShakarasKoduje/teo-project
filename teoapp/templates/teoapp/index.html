@@ -3,6 +3,11 @@
     <p>Hi there!</p>
     <p>It works!</p>
     <div>
+        {% for model in mymodels %}
+            <p>{{model.name}}</strong></p>
+        {% endfor %}
+    </div>
+    <div>
         {% for post in posts %}
             <p>{{post.id}}: <strong>{{post.postTitle}}</strong></p>
         {% endfor %}

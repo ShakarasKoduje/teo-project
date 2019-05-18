@@ -2,7 +2,7 @@ from django.db import models
 
 # Create your models here.
 class MyModel(models.Model):
-    name = models.CharField(max_length=20)
+    name = models.CharField(max_length=120)
 
 class PostData(models.Model):
     _postTitle = models.CharField(max_length=120)
