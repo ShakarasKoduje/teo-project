@@ -32,6 +32,7 @@ ALLOWED_HOSTS = []
 
 INSTALLED_APPS = [
     'teoapp',
+    'celery',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -132,3 +133,31 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/2.2/howto/static-files/
 
 STATIC_URL = '/static/'
+
+#ustawienia celery
+
+from celery.schedules import timedelta, crontab
+
+CELERY_BROKER_URL = 'rabbitmq' #''amqp://localhost'
+CELERY_RESULT_BACKEND = 'amqp'
+CELERY_ACCEPT_CONTENT = ['application/json']
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_RESULT_SERIALIZER = 'json'
+CELERY_AMQP_TASK_RESULT_EXPIRES = 60
+CELERY_TASK_RESULT_EXPIRES = 60
+CELERY_ANNOTATIONS = {
+    'celery.chord_unlock': {
+    'default_retry_delay': 1,
+}
+}
+
+# zadania, które mają się wykonywać w tle pracy aplikacji
+CELERY_BEAT_SCHEDULE = {
+
+    'secondTask': {
+        'task': 'teoapp.tasks.secondtask',
+        'schedule': timedelta(seconds=120)
+    },
+
+
+}

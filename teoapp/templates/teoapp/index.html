@@ -1,0 +1,11 @@
+<html>
+<body>
+    <p>Hi there!</p>
+    <p>It works!</p>
+    <div>
+        {% for post in posts %}
+            <p>{{post.id}}: <strong>{{post.postTitle}}</strong></p>
+        {% endfor %}
+    </div>
+</body>
+</html>

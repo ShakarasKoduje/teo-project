@@ -5,9 +5,7 @@ volumes:
 services:
   web: &python
     build: .
-
-    command: bash -c "python manage.py migrate && python manage.py runserver 0.0.0.0:8080"
-
+    command: bash -c "python manage.py makemigrations && python manage.py migrate && python manage.py runserver 0.0.0.0:8080"
     volumes:
       - .:/code
     ports:
@@ -28,11 +26,14 @@ services:
   rabbitmq:
     image: rabbitmq:3.7-alpine
 
+
+
+
 #celery
   celery_worker:
     <<: *python
     # test czy działa, normalnie przenieść tutaj celery -A teoproject worker -l info -B, ewentualnie z -Q i queusami.
-    command: bash -c "python manage.py makemigrations"
+    command: bash -c "celery -A teoproject worker -l info -Q default,high_priority,low_priority -c5 -B"
     ports: []
     depends_on:
       - postgres
