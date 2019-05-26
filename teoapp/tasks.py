@@ -5,9 +5,12 @@ requests.packages.urllib3.disable_warnings()
 from bs4 import BeautifulSoup as bs
 from teoapp.models import PostData
 import time
-from teoapp.models import MyModel, PostAuthor, PostContent
+from teoapp.models import PostAuthor, PostContent
 from teoapp.analizatorTekstu import topTenAutora, topTenBlog
+#from celery.schedules import crontab, timedelta
+#from celery.task import periodic_task
 
+#@periodic_task(run_every=(timedelta(seconds=180)), name='author_creator')
 @shared_task(queue='low_priority', name='author_creator')
 def author_creator():
     authors = PostData.objects.all()
@@ -16,9 +19,9 @@ def author_creator():
         try:
             postauthor = PostAuthor.objects.get(name = name)
             posts = PostData.objects.filter(postAuthor=postauthor.name)
-            #print(posts)
+
             content = ""
-            topTen = ""
+            #topTen = ""
             for p in posts:
                 content += (str(f"{p.postContent}") + "\n\n\n\n")
             postauthor.posts = content
@@ -34,6 +37,7 @@ def author_creator():
             postauthor.save()
             time.sleep(0.01)
 
+#@periodic_task(run_every=(timedelta(seconds=220)), name='blogContent')
 @shared_task(queue='blog', name='blogContent')
 def blogContent():
     authors = PostAuthor.objects.all()
@@ -57,44 +61,11 @@ def blogContent():
         blogContent.save()
         time.sleep(0.01)
 
-
-@shared_task(queue='low_priority', name="taskdetector")
-def taskdetector():
-    t = datetime.datetime.now()
-    s = str(t)
-    #models = MyModel.objects.all()
-    '''
-    for m in models:
-        try:
-            model = MyModel.objects.get(name = s)
-        except MyModel.DoesNotExist:
-            model = MyModel()
-            model.name = s
-            model.save()
-            time.sleep(0.01)
-    print(model)'''
-    model, created = MyModel.objects.get_or_create(name = s)
-    #print(model, created)
-
-
-@shared_task(max_retries=None, queue='high_priority')
-def secondtask():
+#@periodic_task(run_every=(timedelta(seconds=120)), name='scraper')
+@shared_task(queue='high_priority', name='scraper')
+def scraper():
     listaWpisow = tworzenieModeli(ekstraktorStronWpisow(zbieraczStronBloga()))
-    time.sleep(0.2)
-    #testBazdyDanych = PostData.objects.all().order_by('id').last()
-    #engine = sqlalchemy.create_engine('sqlite:///./db.sqlite3')
-    '''
-    if testBazdyDanych:
-        print("znajduje się ostatni obiekt")
-        #print(testBazdyDanych.id)
-        #with engine.connect() as con:
-            #rs = con.execute(text("UPDATE sqlite_sequence SET seq=0 WHERE name='app_postdata'"))
-        #print("UPDATE")
-    else:
-        print("pusto")
-'''
-
-    time.sleep(0.02)
+    time.sleep(0.05)
     for wpis in listaWpisow:
         try:
             post = PostData.objects.get(_postTitle=str(wpis['title']))

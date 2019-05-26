@@ -1,4 +1,5 @@
 from django.db import models
+import unicodedata
 
 # Create your models here.
 class MyModel(models.Model):
@@ -23,9 +24,12 @@ class PostData(models.Model):
         self._postTitle = nowa
 
 class PostAuthor(models.Model):
+    id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=120)
     posts = models.TextField(blank=True)
     _topTen = models.TextField(blank=True)
+    nameId = models. CharField(max_length=200, blank=True)
+
 
     @property
     def topTen(self):
@@ -35,6 +39,12 @@ class PostAuthor(models.Model):
     def topTen(self, value):
         self._topTen = value
 
+    def save(self, *args, **kw):
+        id = self.name.lower().replace(" ","").replace('ł','l')#.replace('Ł', 'L')
+        #id2 = id.replace('ł','l').replace('Ł', 'L')#.unicodedata.normalize('NFKD', id).encode('ascii','ignore').decode('utf-8')
+        id3 = unicodedata.normalize('NFKD', id).encode('ascii','ignore').decode('utf-8')
+        self.nameId = id3
+        super(PostAuthor, self).save(*args, **kw)
 
 
 class PostContent(models.Model):

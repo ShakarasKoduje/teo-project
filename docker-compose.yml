@@ -2,6 +2,8 @@ version: "3"
 
 volumes:
   pgdata:
+
+
 services:
   web: &python
     build: .
@@ -10,44 +12,48 @@ services:
       - .:/code
     ports:
       - 8080:8080
+
     depends_on:
       - postgres
-      - rabbitmq
-      - celery_beat
+      - rabbitmq3
+      #- celery_beat
+      - celery_beat2
       - celery_worker
 #baza danych
   postgres:
     image: postgres
     volumes:
       - pgdata:/var/lib/postgresql/data
+    restart: on-failure
     ports:
-      - 5432:5432
+      - 5433:5432
+
 
 #broker dla celery
-  rabbitmq:
+  rabbitmq3:
     image: rabbitmq:3.7-alpine
+    restart: on-failure
 
 
 #celery_beat
-  celery_beat:
-    <<: *python
-    environment:
-      - C_FORCE_ROOT=true
-    # test czy działa, normalnie przenieść tutaj celery -A teoproject worker -l info -B, ewentualnie z -Q i queusami.
-    #command: bash -c "celery -A teoproject worker -l info -Q default,high_priority,low_priority -c5 -B"
-    command: bash -c "celery -A teoproject worker -l info -Q default,high_priority,low_priority,blog -c5 -B"
-    ports: []
-    depends_on:
-      - postgres
-      - rabbitmq
+
+  celery_beat2:
+   <<: *python
+   command: bash -c "celery -A teoproject beat -l info --pidfile=" # --scheduler django_celery_beat.schedulers:DatabaseScheduler" #bash -c "celery -A teoproject worker -l info -Q default,high_priority,low_priority,blog -c5 -B"
+   ports: []
+   restart: on-failure
+   depends_on:
+    - postgres
+    - rabbitmq3
 
 #celery_worker
   celery_worker:
     <<: *python
+    restart: on-failure
     #environment:
       #- C_FORCE_ROOT=true
-    command: bash -c "celery -A teoproject worker -l info"
+    command: bash -c "celery -A teoproject worker -l info --concurrency=5 -Q default,high_priority,low_priority,blog"
     ports: []
     depends_on:
       - postgres
-      - rabbitmq
+      - rabbitmq3

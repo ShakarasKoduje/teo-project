@@ -32,6 +32,7 @@ ALLOWED_HOSTS = []
 
 INSTALLED_APPS = [
     'teoapp',
+    'rest_framework',
     'celery',
     'django.contrib.admin',
     'django.contrib.auth',
@@ -138,38 +139,37 @@ STATIC_URL = '/static/'
 
 from celery.schedules import timedelta, crontab
 
-CELERY_BROKER_URL = 'rabbitmq' #''amqp://localhost'
-CELERY_RESULT_BACKEND = 'amqp'
+CELERY_BROKER_URL = 'rabbitmq3' #''amqp://localhost'
+CELERY_RESULT_BACKEND = 'rpc'#'amqp'
 CELERY_ACCEPT_CONTENT = ['application/json']
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
 CELERY_AMQP_TASK_RESULT_EXPIRES = 60
 CELERY_TASK_RESULT_EXPIRES = 60
+
 CELERY_ANNOTATIONS = {
     'celery.chord_unlock': {
     'default_retry_delay': 1,
 }
 }
+CELERY_IGNORE_RESULT = True
 
 # zadania, które mają się wykonywać w tle pracy aplikacji
 CELERY_BEAT_SCHEDULE = {
 
-    'secondTask': {
-        'task': 'teoapp.tasks.secondtask',
-        'schedule': timedelta(seconds=120)
+    'scraper': {
+        'task': 'scraper',
+        'schedule': crontab(hour=1) #timedelta(seconds=120)
     },
     'author_creator':{
         'task':'author_creator',
-        'schedule': timedelta(seconds=180)
+        'schedule': crontab(hour=3)
     },
     'blogContent':{
         'task': 'blogContent',
-        'schedule': timedelta(seconds=220)
+        'schedule': crontab(hour=2)
     },
-    'taskdetector':{
-        'task': 'taskdetector',
-        'schedule' : timedelta(seconds=10)
-    }
+
 
 
 }

@@ -7,11 +7,16 @@ celery==4.3.0
 certifi==2019.3.9
 chardet==3.0.4
 Django==2.2.1
+django-celery-beat==1.4.0
+django-timezone-field==3.0
+djangorestframework==3.9.4
 flower==0.9.3
 idna==2.8
 kombu==4.5.0
 nltk==3.4.1
 psycopg2==2.7.3.2
+python-crontab==2.3.6
+python-dateutil==2.8.0
 pytz==2019.1
 requests==2.22.0
 six==1.12.0

@@ -15,9 +15,19 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path,include
+from rest_framework import routers
+from teoapp import views
+
+authors_list = views.AuthorsViewSet.as_view({'get':'list'})
+authors_detail = views.AuthorsViewSet.as_view({'get':'retrieve'},lookup_field = 'nameId')
+blog_topten = views.PostContentViewSet.as_view({'get':'list'})
 
 
 urlpatterns = [
+
     path('admin/', admin.site.urls),
-    path('', include('teoapp.urls'))
+    path('stats/<str:nameId>', authors_detail, name='author-detail'),
+    path('stats/', blog_topten),
+    path('authors/',authors_list)
+    #path('', include('teoapp.urls')),
 ]

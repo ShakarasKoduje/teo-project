@@ -1,14 +1,30 @@
 from django.shortcuts import render
 from teoapp.models import PostData, PostAuthor, PostContent
-# Create your views here.
+from teoapp.serializers import PostContentSerializer, AuthorsSerializer, AuthorsListSerializer
+from rest_framework import viewsets
+from rest_framework.response import Response
+#from django.views.decorators.csrf import csrf_exempt
+from rest_framework.decorators import api_view, action
+from rest_framework import status
 
 
-def index(request):
-    listaWpisow = PostData.objects.all()
-    #mymodels = MyModel.objects.all().order_by('-id')[:4] #zwraca cztery ostatnie obiekty z bazy danych
-    listaAutorow = PostAuthor.objects.all()
-    caloscBlog = PostContent.objects.get(id=1)
-    #print(f"To jest zawartość całego bloga {str(caloscBlog.content)[:50]}")
-    return render(request, 'teoapp/index.html',  {'posts' : listaWpisow,
-                                                  'authors' : listaAutorow,
-                                                  'calosc':caloscBlog})
+class PostContentViewSet(viewsets.ModelViewSet):
+    queryset = PostContent.objects.all()
+    serializer_class = PostContentSerializer
+    http_method_names = ['get', 'head']
+
+class AuthorsViewSet(viewsets.ModelViewSet):
+    queryset = PostAuthor.objects.all()
+    serializer_class = AuthorsSerializer
+    lookup_field = 'nameId'
+    http_method_names = ['get', 'head']
+    #użycie dwóch serializatorów by przekazywać rózne informacje do views
+    def get_serializer_class(self):
+        if self.action == 'list':
+            return AuthorsListSerializer
+        return AuthorsSerializer
+    def retrieve(self, request, nameId=None,  *args, **kwargs):
+        obj = PostAuthor.objects.get(nameId=nameId)
+        if nameId:
+            serializer = self.serializer_class(obj)
+            return Response(serializer.data)
