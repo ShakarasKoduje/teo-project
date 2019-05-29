@@ -26,7 +26,7 @@ blog_topten = views.PostContentViewSet.as_view({'get':'list'})
 urlpatterns = [
 
     path('admin/', admin.site.urls),
-    path('stats/<str:nameId>', authors_detail, name='author-detail'),
+    path('stats/<str:nameId>/', authors_detail, name='author-detail'),
     path('stats/', blog_topten),
     path('authors/',authors_list)
     #path('', include('teoapp.urls')),

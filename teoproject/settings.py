@@ -159,15 +159,15 @@ CELERY_BEAT_SCHEDULE = {
 
     'scraper': {
         'task': 'scraper',
-        'schedule': crontab(hour=1) #timedelta(seconds=120)
+        'schedule': 120
     },
     'author_creator':{
         'task':'author_creator',
-        'schedule': crontab(hour=3)
+        'schedule': 220
     },
     'blogContent':{
         'task': 'blogContent',
-        'schedule': crontab(hour=2)
+        'schedule': 180
     },
 
 

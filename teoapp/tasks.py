@@ -124,10 +124,10 @@ def ekstraktorStronWpisow(teonitePages):
                 _a = article.find('a').get('href')
                 start = _a.find('blog')
                 url = 'https://teonite.com/' + _a[start:]
-                #print(url)
+
                 postUrls.append(url)
-                #print(f"artykuł: {url}")
-        #print(f"Długość listy z linkami artykułów: {len(postUrls)}")
+
+
         return postUrls
 
 def tworzenieModeli(postUrls):
